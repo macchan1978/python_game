@@ -9,6 +9,7 @@ class Bullet(ObjectBase):
         self.vec = vec
         self.rect = pg.Rect(0, 0, 10, 10)
         self.counter = 0
+        self.life = 1
 
     def tick(self):
         self.pos += self.vec
@@ -16,7 +17,10 @@ class Bullet(ObjectBase):
         self.counter += 1
 
     def isLive(self):
-        return self.counter < 20
+        return self.life >0 and self.counter < 30
+
+    def hit(self):
+        self.life -= 1
 
     #TODO : そのうち共通化
     def updateRect(self):

@@ -51,7 +51,9 @@ def main():
     player = Player(pos=PosF(200, 200))
 
     bullets: list[Bullet] = []
+    enemies: list[Enemy] = []
     tpc = [time.perf_counter(), 0]
+    counter = 0
 
     gamePad = GamePad()
     while running:
@@ -65,18 +67,38 @@ def main():
                 if event.key == pg.K_ESCAPE:
                     running = False
 
+        if counter % 100 == 10:
+            enemies.append(Enemy(PosF(100,100)))
+
 
         player.play(gamePad, bullets)
         player.tick()
 
         for b in bullets:
             b.tick()
+
+        # 当たり判定の計算。O(n^2)だがまあ気にしない。
+        for e in enemies:
+            e.tick()
+            for b in bullets:
+                if b.isLive() and e.rect.colliderect(b.rect):
+                    e.hit()
+                    b.hit()
+                    #TODO : 当たったら音を鳴らしたい。
+
+
         bullets = [b for b in bullets if b.isLive()]
+        enemies = [e for e in enemies if e.isLive()]
+
+        
+
 
         screen.fill((200, 200, 200))
         player.render(screen)
         for b in bullets:
             b.render(screen)
+        for e in enemies:
+            e.render(screen)
 
         # 処理時間
         tpc[1] = time.perf_counter()
@@ -86,6 +108,7 @@ def main():
         screen.blit(dispText, (10, 10))
 
         pg.display.flip()
+        counter += 1
 
 
 # run the main function only if this module is executed as the main script
