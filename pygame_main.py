@@ -1,5 +1,6 @@
 from __future__ import annotations
 from collections import defaultdict
+from objects import *
 import pygame as pg
 import os
 import numpy as np
@@ -22,11 +23,15 @@ def main():
     running = True
     counter = 0
     counterAdd = 5
-    pos = np.array((200, 200))
     speed = 5
 
+    player = Player(pos=PosF(200, 200))
+
     vec = np.array((0, 0))
+    bullets: list[Bullet] = []
+    vec = None
     while running:
+        shot = False
         clock.tick(60)
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -40,23 +45,37 @@ def main():
                     vec = np.array((0, -speed))
                 if event.key == pg.K_DOWN:
                     vec = np.array((0, speed))
+                if event.key == pg.K_SPACE:
+                    shot = True
             if event.type == pg.KEYUP:
                 if event.key in [pg.K_RIGHT, pg.K_LEFT, pg.K_UP, pg.K_DOWN]:
                     vec = np.array((0, 0))
+                    vec = None
 
         counter += counterAdd
         if counter > 500 or counter < 0:
             counterAdd = -counterAdd
         print(f'counter : {counter}')
 
-        pos = pos+vec
+        if vec is not None:
+            player.move(VecF(vec[0], vec[1]))
+        if shot:
+            player.shot(bullets)
+        player.tick()
+
+        for b in bullets:
+            b.tick()
+        bullets = [b for b in bullets if b.isLive()]
 
         screen.fill((255, 255, 255))
         # MEMO : rectは半透明を使えない。
         pg.draw.rect(screen, color=(128, 0, 0), rect=[
                      10, 10, 100+counter, 50+counter])
-        pg.draw.ellipse(screen, color=(100, 100, 255),
-                        rect=[pos[0], pos[1], 30, 30])
+        player.render(screen)
+        for b in bullets:
+            b.render(screen)
+        # pg.draw.ellipse(screen, color=(100, 100, 255),
+        #                 rect=[pos[0], pos[1], 30, 30])
         pg.display.flip()
 
 
