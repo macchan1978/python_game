@@ -44,12 +44,9 @@ def main():
     # create a surface on screen that has the size of 240 x 180
     screen = pg.display.set_mode((800, 600))
     myfont = pg.font.SysFont("", 25)
-    dispText = myfont.render("test", True, (0, 128, 0))
+    dispText = myfont.render("info", True, (0, 128, 0))
     # define a variable to control the main loop
     running = True
-    counter = 0
-    counterAdd = 5
-    speed = 5
 
     player = Player(pos=PosF(200, 200))
 
@@ -58,13 +55,8 @@ def main():
 
     gamePad = GamePad()
     while running:
-        # 処理時間
-        tpc[1] = time.perf_counter()
-        tpcMs = 1000*(tpc[1]-tpc[0])
-        dispText = myfont.render(f'{tpcMs:.3g}', False, (255, 255, 255))
-        tpc[0] = tpc[1]
-
         clock.tick(60)
+
         for event in pg.event.get():
             gamePad.processEvent(event)
             if event.type == pg.QUIT:
@@ -73,9 +65,6 @@ def main():
                 if event.key == pg.K_ESCAPE:
                     running = False
 
-        counter += counterAdd
-        if counter > 500 or counter < 0:
-            counterAdd = -counterAdd
 
         player.play(gamePad, bullets)
         player.tick()
@@ -85,16 +74,17 @@ def main():
         bullets = [b for b in bullets if b.isLive()]
 
         screen.fill((200, 200, 200))
-        # MEMO : rectは半透明を使えない。
-        pg.draw.rect(screen, color=(128, 0, 0), rect=[
-                     10, 10, 100+counter, 50+counter])
         player.render(screen)
         for b in bullets:
             b.render(screen)
 
-        screen.blit(dispText, (50, 50))
-        # pg.draw.ellipse(screen, color=(100, 100, 255),
-        #                 rect=[pos[0], pos[1], 30, 30])
+        # 処理時間
+        tpc[1] = time.perf_counter()
+        tpcMs = 1000*(tpc[1]-tpc[0])
+        dispText = myfont.render(f'{tpcMs:.3g}', False, (255, 255, 255))
+        tpc[0] = tpc[1]
+        screen.blit(dispText, (10, 10))
+
         pg.display.flip()
 
 

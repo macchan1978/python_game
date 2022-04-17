@@ -15,6 +15,7 @@ class Player(ObjectBase):
         self.speed = 5
         self.dirVec = VecF(1, 0)
         self.moveVec = VecF(0, 0)
+        # 当たり判定.
         self.rect = pg.Rect(0, 0, 30, 30)
         self.rectDir = pg.Rect(0, 0, 10, 10)
         self.updateRect()
