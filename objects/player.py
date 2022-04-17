@@ -20,18 +20,36 @@ class Player(ObjectBase):
         self.updateRect()
 
     def play(self, pad: GamePad, bullets: list[Bullet]):
-        speed = self.speed
-        if pad.keyUp:
-            self.setMoveVec(VecF(0, -speed))
-        if pad.keyRight:
-            self.setMoveVec(VecF(speed, 0))
-        if pad.keyDown:
-            self.setMoveVec(VecF(0, speed))
-        if pad.keyLeft:
-            self.setMoveVec(VecF(-speed, 0))
         if pad.buttonSpace:
             self.shot(bullets)
-        pass
+
+        angle = self.calcMoveAngle(pad)
+        if not angle[0]:
+            return
+        rad = math.radians(angle[1])
+        vx, vy = (self.speed*math.cos(rad), self.speed*math.sin(rad))
+        self.setMoveVec(VecF(vx,vy))
+
+    def calcMoveAngle(self, pad: GamePad) -> tuple[bool, float]:
+        if pad.keyUp and pad.keyRight:
+            return (True, -45.0)
+        if pad.keyRight and pad.keyDown:
+            return (True, 45.0)
+        if pad.keyDown and pad.keyLeft:
+            return (True, 135.0)
+        if pad.keyLeft and pad.keyUp:
+            return(True, -135.0)
+        if pad.keyUp:
+            return(True, -90.0)
+        if pad.keyRight:
+            return(True, 0.0)
+        if pad.keyDown:
+            return(True, 90.0)
+        if pad.keyLeft:
+            return(True, 180.0)
+        if pad.keyUp:
+            return(True, -90)
+        return (False, 0)
 
     def updateRect(self):
         self.rect.center = self.pos.toPosI().toTuple()
