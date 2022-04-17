@@ -21,7 +21,7 @@ class Player(ObjectBase):
         self.moveVec = self.dirVec = vec
 
     def shot(self, bullets: list[Bullet]):
-        bullets.append(Bullet(self.pos, self.dirVec))
+        bullets.append(Bullet(self.pos, self.dirVec*2))
         pass
 
     def tick(self):

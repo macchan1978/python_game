@@ -16,7 +16,7 @@ class Bullet(ObjectBase):
         self.counter += 1
 
     def isLive(self):
-        return self.counter < 100
+        return self.counter < 20
 
     #TODO : そのうち共通化
     def updateRect(self):

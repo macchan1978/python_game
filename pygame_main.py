@@ -47,6 +47,8 @@ def main():
                     vec = np.array((0, speed))
                 if event.key == pg.K_SPACE:
                     shot = True
+                if event.key == pg.K_ESCAPE:
+                    running = False
             if event.type == pg.KEYUP:
                 if event.key in [pg.K_RIGHT, pg.K_LEFT, pg.K_UP, pg.K_DOWN]:
                     vec = np.array((0, 0))
