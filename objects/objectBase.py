@@ -1,3 +1,5 @@
+from __future__ import annotations
+import math
 import pygame as pg
 
 
@@ -13,6 +15,8 @@ class PosI:
     def __init__(self, x: int, y: int):
         self.x = x
         self.y = y
+    def toTuple(self)->tuple[int,int]:
+        return (self.x, self.y)
 
 
 class PosF:
@@ -33,6 +37,14 @@ class VecF(PosF):
 
     def __mul__(self, trg: float):
         return VecF(self.x*trg, self.y*trg)
+
+    def length(self):
+        return math.sqrt(self.x*self.x+self.y*self.y)
+
+    def normalize(self):
+        len = self.length()
+        return VecF(self.x/len, self.y/len)
+
 
 
 def main():

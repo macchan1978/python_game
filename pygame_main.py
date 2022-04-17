@@ -1,10 +1,35 @@
 from __future__ import annotations
 from collections import defaultdict
+import time
 from objects import *
 import pygame as pg
 import os
 import numpy as np
 # define a main function
+
+
+class GamePad:
+    def __init__(self):
+        self.keyUp = False
+        self.keyRight = False
+        self.keyDown = False
+        self.keyLeft = False
+        self.buttonSpace = False
+        pass
+
+    def processEvent(self, event: pg.Event):
+        isKeyDown = event.type == pg.KEYDOWN
+        if event.type in [pg.KEYDOWN, pg.KEYUP]:
+            if event.key == pg.K_RIGHT:
+                self.keyRight = isKeyDown
+            if event.key == pg.K_LEFT:
+                self.keyLeft = isKeyDown
+            if event.key == pg.K_UP:
+                self.keyUp = isKeyDown
+            if event.key == pg.K_DOWN:
+                self.keyDown = isKeyDown
+            if event.key == pg.K_SPACE:
+                self.buttonSpace = isKeyDown
 
 
 def main():
@@ -18,7 +43,8 @@ def main():
 
     # create a surface on screen that has the size of 240 x 180
     screen = pg.display.set_mode((800, 600))
-
+    myfont = pg.font.SysFont("", 25)
+    dispText = myfont.render("test", True, (0, 128, 0))
     # define a variable to control the main loop
     running = True
     counter = 0
@@ -27,55 +53,46 @@ def main():
 
     player = Player(pos=PosF(200, 200))
 
-    vec = np.array((0, 0))
     bullets: list[Bullet] = []
-    vec = None
+    tpc = [time.perf_counter(), 0]
+
+    gamePad = GamePad()
     while running:
-        shot = False
+        # 処理時間
+        tpc[1] = time.perf_counter()
+        tpcMs = 1000*(tpc[1]-tpc[0])
+        dispText = myfont.render(f'{tpcMs:.3g}', False, (255, 255, 255))
+        tpc[0] = tpc[1]
+
         clock.tick(60)
         for event in pg.event.get():
+            gamePad.processEvent(event)
             if event.type == pg.QUIT:
                 running = False
             if event.type == pg.KEYDOWN:
-                if event.key == pg.K_RIGHT:
-                    vec = np.array((speed, 0))
-                if event.key == pg.K_LEFT:
-                    vec = np.array((-speed, 0))
-                if event.key == pg.K_UP:
-                    vec = np.array((0, -speed))
-                if event.key == pg.K_DOWN:
-                    vec = np.array((0, speed))
-                if event.key == pg.K_SPACE:
-                    shot = True
                 if event.key == pg.K_ESCAPE:
                     running = False
-            if event.type == pg.KEYUP:
-                if event.key in [pg.K_RIGHT, pg.K_LEFT, pg.K_UP, pg.K_DOWN]:
-                    vec = np.array((0, 0))
-                    vec = None
 
         counter += counterAdd
         if counter > 500 or counter < 0:
             counterAdd = -counterAdd
-        print(f'counter : {counter}')
 
-        if vec is not None:
-            player.move(VecF(vec[0], vec[1]))
-        if shot:
-            player.shot(bullets)
+        player.play(gamePad, bullets)
         player.tick()
 
         for b in bullets:
             b.tick()
         bullets = [b for b in bullets if b.isLive()]
 
-        screen.fill((255, 255, 255))
+        screen.fill((200, 200, 200))
         # MEMO : rectは半透明を使えない。
         pg.draw.rect(screen, color=(128, 0, 0), rect=[
                      10, 10, 100+counter, 50+counter])
         player.render(screen)
         for b in bullets:
             b.render(screen)
+
+        screen.blit(dispText, (50, 50))
         # pg.draw.ellipse(screen, color=(100, 100, 255),
         #                 rect=[pos[0], pos[1], 30, 30])
         pg.display.flip()
