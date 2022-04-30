@@ -15,8 +15,9 @@ class PosI:
     def __init__(self, x: int, y: int):
         self.x = x
         self.y = y
-    def toTuple(self)->tuple[int,int]:
-        return (self.x, self.y)
+
+    def to_tuple(self) -> tuple[int, int]:
+        return self.x, self.y
 
 
 class PosF:
@@ -24,11 +25,11 @@ class PosF:
         self.x = x
         self.y = y
 
-    def toPosI(self) -> PosI:
+    def to_pos_i(self) -> PosI:
         return PosI(int(self.x), int(self.y))
 
     def __add__(self, trg):
-        return PosF(self.x+trg.x, self.y+trg.y)
+        return PosF(self.x + trg.x, self.y + trg.y)
 
 
 class VecF(PosF):
@@ -36,20 +37,19 @@ class VecF(PosF):
         super().__init__(x, y)
 
     def __mul__(self, trg: float):
-        return VecF(self.x*trg, self.y*trg)
+        return VecF(self.x * trg, self.y * trg)
 
     def length(self):
-        return math.sqrt(self.x*self.x+self.y*self.y)
+        return math.sqrt(self.x * self.x + self.y * self.y)
 
     def normalize(self):
-        len = self.length()
-        return VecF(self.x/len, self.y/len)
-
+        length = self.length()
+        return VecF(self.x / length, self.y / length)
 
 
 def main():
     v = VecF(1, 2)
-    v = v*1.5
+    v = v * 1.5
     print(f'v*1.5 : ({v.x} {v.y})')
     pass
 

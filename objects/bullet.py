@@ -1,4 +1,3 @@
-import pygame as pg
 from .objectBase import *
 
 
@@ -13,19 +12,19 @@ class Bullet(ObjectBase):
 
     def tick(self):
         self.pos += self.vec
-        self.updateRect()
+        self.update_rect()
         self.counter += 1
 
-    def isLive(self):
-        return self.life >0 and self.counter < 30
+    def is_live(self):
+        return self.life > 0 and self.counter < 30
 
     def hit(self):
         self.life -= 1
 
-    #TODO : そのうち共通化
-    def updateRect(self):
-        posI = self.pos.toPosI()
-        self.rect.center = (posI.x, posI.y)
+    # TODO : そのうち共通化
+    def update_rect(self):
+        pos_i = self.pos.to_pos_i()
+        self.rect.center = (pos_i.x, pos_i.y)
 
     def render(self, surface: pg.surface.Surface):
         pg.draw.rect(surface, color=self.color, rect=self.rect)

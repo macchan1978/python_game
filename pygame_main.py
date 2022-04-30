@@ -1,10 +1,11 @@
 from __future__ import annotations
-from collections import defaultdict
-import time
-from objects import *
-import pygame as pg
+
 import os
-import numpy as np
+import time
+
+from objects import *
+
+
 # define a main function
 
 
@@ -17,19 +18,19 @@ class GamePad:
         self.buttonSpace = False
         pass
 
-    def processEvent(self, event: pg.Event):
-        isKeyDown = event.type == pg.KEYDOWN
+    def process_event(self, event: pg.Event):
+        is_key_down = event.type == pg.KEYDOWN
         if event.type in [pg.KEYDOWN, pg.KEYUP]:
             if event.key == pg.K_RIGHT:
-                self.keyRight = isKeyDown
+                self.keyRight = is_key_down
             if event.key == pg.K_LEFT:
-                self.keyLeft = isKeyDown
+                self.keyLeft = is_key_down
             if event.key == pg.K_UP:
-                self.keyUp = isKeyDown
+                self.keyUp = is_key_down
             if event.key == pg.K_DOWN:
-                self.keyDown = isKeyDown
+                self.keyDown = is_key_down
             if event.key == pg.K_SPACE:
-                self.buttonSpace = isKeyDown
+                self.buttonSpace = is_key_down
 
 
 def main():
@@ -43,24 +44,23 @@ def main():
 
     # create a surface on screen that has the size of 240 x 180
     screen = pg.display.set_mode((800, 600))
-    myfont = pg.font.SysFont("", 25)
-    dispText = myfont.render("info", True, (0, 128, 0))
+    my_font = pg.font.SysFont("", 25)
     # define a variable to control the main loop
     running = True
 
-    player = Player(pos=PosF(200, 200))
+    the_player = Player(pos=PosF(200, 200))
 
     bullets: list[Bullet] = []
     enemies: list[Enemy] = []
     tpc = [time.perf_counter(), 0]
     counter = 0
 
-    gamePad = GamePad()
+    game_pad = GamePad()
     while running:
         clock.tick(60)
 
         for event in pg.event.get():
-            gamePad.processEvent(event)
+            game_pad.process_event(event)
             if event.type == pg.QUIT:
                 running = False
             if event.type == pg.KEYDOWN:
@@ -68,11 +68,10 @@ def main():
                     running = False
 
         if counter % 100 == 10:
-            enemies.append(Enemy(PosF(100,100)))
+            enemies.append(Enemy(PosF(100, 100)))
 
-
-        player.play(gamePad, bullets)
-        player.tick()
+        the_player.play(game_pad, bullets)
+        the_player.tick()
 
         for b in bullets:
             b.tick()
@@ -81,20 +80,16 @@ def main():
         for e in enemies:
             e.tick()
             for b in bullets:
-                if b.isLive() and e.rect.colliderect(b.rect):
+                if b.is_live() and e.rect.colliderect(b.rect):
                     e.hit()
                     b.hit()
-                    #TODO : 当たったら音を鳴らしたい。
+                    # TODO : 当たったら音を鳴らしたい。
 
-
-        bullets = [b for b in bullets if b.isLive()]
-        enemies = [e for e in enemies if e.isLive()]
-
-        
-
+        bullets = [b for b in bullets if b.is_live()]
+        enemies = [e for e in enemies if e.is_live()]
 
         screen.fill((200, 200, 200))
-        player.render(screen)
+        the_player.render(screen)
         for b in bullets:
             b.render(screen)
         for e in enemies:
@@ -102,10 +97,10 @@ def main():
 
         # 処理時間
         tpc[1] = time.perf_counter()
-        tpcMs = 1000*(tpc[1]-tpc[0])
-        dispText = myfont.render(f'{tpcMs:.3g}', False, (255, 255, 255))
+        tpc_ms = 1000 * (tpc[1] - tpc[0])
+        disp_text = my_font.render(f'{tpc_ms:.3g}', False, (255, 255, 255))
         tpc[0] = tpc[1]
-        screen.blit(dispText, (10, 10))
+        screen.blit(disp_text, (10, 10))
 
         pg.display.flip()
         counter += 1
