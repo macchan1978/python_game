@@ -36,6 +36,11 @@ class GamePad:
 def main():
     print(f'current dir : [{os.getcwd()}]')
 
+    pg.mixer.init(11025)  # raises exception on fail
+    main_dir = os.path.split(os.path.abspath(__file__))[0]
+    sound_path = os.path.join(main_dir, "resources", "boom.wav")
+    sound = pg.mixer.Sound(sound_path)
+
     # initialize the pygame module
     pg.init()
     clock = pg.time.Clock()
@@ -86,7 +91,11 @@ def main():
                     # TODO : 当たったら音を鳴らしたい。
 
         bullets = [b for b in bullets if b.is_live()]
+        enemy_num_before = len(enemies)
         enemies = [e for e in enemies if e.is_live()]
+        enemy_num_after = len(enemies)
+        if enemy_num_after < enemy_num_before:
+            sound.play()
 
         screen.fill((200, 200, 200))
         the_player.render(screen)
