@@ -8,6 +8,33 @@ from objects import *
 
 
 # define a main function
+class Context:
+    __instance = None
+
+    def __init__(self):
+        self.sound_mgr = SoundManager()
+        self.game_pad = GamePad()
+
+        pass
+
+    pass
+
+    @property
+    def pad(self) -> GamePad:
+        return self.game_pad
+
+    @property
+    def sound(self) -> SoundManager:
+        return self.sound_mgr
+
+    @staticmethod
+    def initialize():
+        Context.__instance = Context()
+        pass
+
+    @staticmethod
+    def get_instance() -> Context:
+        return Context.__instance
 
 
 class GamePad:
@@ -57,12 +84,13 @@ class SoundManager:
 def main():
     print(f'current dir : [{os.getcwd()}]')
 
+    Context.initialize()
+    context = Context.get_instance()
+
     pg.init()
     clock = pg.time.Clock()
     # load and set the logo
     pg.display.set_caption("minimal program")
-
-    sound_mgr = SoundManager()
 
     # create a surface on screen that has the size of 240 x 180
     screen = pg.display.set_mode((800, 600))
@@ -77,12 +105,12 @@ def main():
     tpc = [time.perf_counter(), 0]
     counter = 0
 
-    game_pad = GamePad()
+    #game_pad = GamePad()
     while running:
         clock.tick(60)
 
         for event in pg.event.get():
-            game_pad.process_event(event)
+            context.pad.process_event(event)
             if event.type == pg.QUIT:
                 running = False
             if event.type == pg.KEYDOWN:
@@ -92,7 +120,7 @@ def main():
         if counter % 100 == 10:
             enemies.append(Enemy(PosF(100, 100)))
 
-        the_player.play(game_pad, bullets)
+        the_player.play(context, bullets)
         the_player.tick()
 
         for b in bullets:
@@ -112,7 +140,7 @@ def main():
         enemies = [e for e in enemies if e.is_live()]
         enemy_num_after = len(enemies)
         if enemy_num_after < enemy_num_before:
-            sound_mgr.play(SoundType.DESTROY)
+            context.sound.play(SoundType.DESTROY)
 
         screen.fill((200, 200, 200))
         the_player.render(screen)

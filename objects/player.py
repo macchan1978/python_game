@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from pygame_main import GamePad
+from pygame_main import GamePad, Context
 from .bullet import *
 
 
@@ -18,7 +18,9 @@ class Player(ObjectBase):
         self.rectDir = pg.Rect(0, 0, 10, 10)
         self.update_rect()
 
-    def play(self, pad: GamePad, bullets: list[Bullet]):
+    def play(self, context: Context, bullets: list[Bullet]):
+        ctx = context
+        pad = ctx.pad
         if pad.buttonSpace:
             self.shot(bullets)
 
