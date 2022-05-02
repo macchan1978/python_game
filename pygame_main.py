@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import time
+from enum import Enum, auto
 
 from objects import *
 
@@ -33,19 +34,35 @@ class GamePad:
                 self.buttonSpace = is_key_down
 
 
+class SoundType(Enum):
+    HIT = auto()
+    DESTROY = auto()
+
+
+class SoundManager:
+    def __init__(self):
+        pg.mixer.init(11025)  # raises exception on fail
+        main_dir = os.path.split(os.path.abspath(__file__))[0]
+        sound_path = os.path.join(main_dir, "resources", "boom.wav")
+
+        self.sounds = {SoundType.DESTROY: pg.mixer.Sound(sound_path)}
+
+    def play(self, t: SoundType):
+        self.sounds[t].play()
+        pass
+
+    pass
+
+
 def main():
     print(f'current dir : [{os.getcwd()}]')
 
-    pg.mixer.init(11025)  # raises exception on fail
-    main_dir = os.path.split(os.path.abspath(__file__))[0]
-    sound_path = os.path.join(main_dir, "resources", "boom.wav")
-    sound = pg.mixer.Sound(sound_path)
-
-    # initialize the pygame module
     pg.init()
     clock = pg.time.Clock()
     # load and set the logo
     pg.display.set_caption("minimal program")
+
+    sound_mgr = SoundManager()
 
     # create a surface on screen that has the size of 240 x 180
     screen = pg.display.set_mode((800, 600))
@@ -95,7 +112,7 @@ def main():
         enemies = [e for e in enemies if e.is_live()]
         enemy_num_after = len(enemies)
         if enemy_num_after < enemy_num_before:
-            sound.play()
+            sound_mgr.play(SoundType.DESTROY)
 
         screen.fill((200, 200, 200))
         the_player.render(screen)
