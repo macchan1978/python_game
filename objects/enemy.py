@@ -5,6 +5,7 @@ from .objectBase import *
 
 class Enemy(ObjectBase):
     def __init__(self, pos: PosF):
+        self.score = 100
         self.counter = 0
         self.shotCount = 0
         self.color = [100, 250, 255]
@@ -35,6 +36,9 @@ class Enemy(ObjectBase):
 
     def is_destroyed(self):
         return self.life <= 0
+
+    def get_score(self):
+        return self.score
 
     def render(self, surface: pg.surface.Surface):
         pg.draw.rect(surface, color=self.color, rect=self.rect)

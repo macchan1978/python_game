@@ -25,8 +25,11 @@ def main():
 
     bullets: list[Bullet] = []
     enemies: list[Enemy] = []
+    tpc_start = time.perf_counter()
     tpc = [time.perf_counter(), 0]
+    total_sec = 30
     counter = 0
+    score = 0
 
     # game_pad = GamePad()
     while running:
@@ -39,6 +42,7 @@ def main():
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     running = False
+
 
         if counter % 100 == 10:
             enemies.append(Enemy(PosF(100, 100)))
@@ -56,6 +60,7 @@ def main():
                 if b.is_live() and e.rect.colliderect(b.rect):
                     e.hit()
                     b.hit()
+        score += sum(e.get_score() for e in enemies if e.is_destroyed())
 
         if any(e.is_destroyed() for e in enemies):
             game_context.sound().play(game_context.SoundType.DESTROY)
@@ -73,9 +78,20 @@ def main():
         # 処理時間
         tpc[1] = time.perf_counter()
         tpc_ms = 1000 * (tpc[1] - tpc[0])
-        disp_text = my_font.render(f'{tpc_ms:.3g}', False, (255, 255, 255))
         tpc[0] = tpc[1]
-        screen.blit(disp_text, (10, 10))
+        play_sec = int(tpc[1] - tpc_start)
+        rest_sec = total_sec - play_sec
+
+        disp_frame_rate = my_font.render(f'{tpc_ms:.3g}', False, (255, 255, 255))
+        disp_rest_sec = my_font.render(f'rest : {rest_sec}', False, (255, 255, 255))
+        disp_score = my_font.render(f'Score : {score}', False, (255,255,255))
+        screen.blit(disp_frame_rate, (10, 10))
+        screen.blit(disp_rest_sec, (10, 30))
+        screen.blit(disp_score, (10, 50))
+
+        # TODO : ゲーム終了
+        if rest_sec <= 0:
+            pass
 
         pg.display.flip()
         counter += 1
