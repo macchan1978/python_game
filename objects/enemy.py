@@ -33,6 +33,9 @@ class Enemy(ObjectBase):
     def is_live(self):
         return self.life > 0 and self.counter < 500
 
+    def is_destroyed(self):
+        return self.life <= 0
+
     def render(self, surface: pg.surface.Surface):
         pg.draw.rect(surface, color=self.color, rect=self.rect)
         dir_rect_pos = self.pos + self.dirVec * 15

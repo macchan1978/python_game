@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import os
 import time
-
 from objects import *
 
 
@@ -57,14 +56,12 @@ def main():
                 if b.is_live() and e.rect.colliderect(b.rect):
                     e.hit()
                     b.hit()
-                    # TODO : 当たったら音を鳴らしたい。
+
+        if any(e.is_destroyed() for e in enemies):
+            game_context.sound().play(game_context.SoundType.DESTROY)
 
         bullets = [b for b in bullets if b.is_live()]
-        enemy_num_before = len(enemies)
         enemies = [e for e in enemies if e.is_live()]
-        enemy_num_after = len(enemies)
-        if enemy_num_after < enemy_num_before:
-            game_context.sound().play(game_context.SoundType.DESTROY)
 
         screen.fill((200, 200, 200))
         the_player.render(screen)
