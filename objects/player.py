@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from pygame_main import GamePad, Context
+import game_context
 from .bullet import *
 
 
@@ -18,9 +18,8 @@ class Player(ObjectBase):
         self.rectDir = pg.Rect(0, 0, 10, 10)
         self.update_rect()
 
-    def play(self, context: Context, bullets: list[Bullet]):
-        ctx = context
-        pad = ctx.pad
+    def play(self, bullets: list[Bullet]):
+        pad = game_context.pad()
         if pad.buttonSpace:
             self.shot(bullets)
 
@@ -32,7 +31,7 @@ class Player(ObjectBase):
         self.set_move_vec(VecF(vx, vy))
 
     @staticmethod
-    def calc_move_angle(pad: GamePad) -> tuple[bool, float]:
+    def calc_move_angle(pad: game_context.GamePad) -> tuple[bool, float]:
         if pad.keyUp and pad.keyRight:
             return True, -45.0
         if pad.keyRight and pad.keyDown:

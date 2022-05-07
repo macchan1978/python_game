@@ -2,90 +2,14 @@ from __future__ import annotations
 
 import os
 import time
-from enum import Enum, auto
 
 from objects import *
-
-
-# define a main function
-class Context:
-    __instance = None
-
-    def __init__(self):
-        self.sound_mgr = SoundManager()
-        self.game_pad = GamePad()
-
-        pass
-
-    pass
-
-    @property
-    def pad(self) -> GamePad:
-        return self.game_pad
-
-    @property
-    def sound(self) -> SoundManager:
-        return self.sound_mgr
-
-    @staticmethod
-    def initialize():
-        Context.__instance = Context()
-        pass
-
-    @staticmethod
-    def get_instance() -> Context:
-        return Context.__instance
-
-
-class GamePad:
-    def __init__(self):
-        self.keyUp = False
-        self.keyRight = False
-        self.keyDown = False
-        self.keyLeft = False
-        self.buttonSpace = False
-        pass
-
-    def process_event(self, event: pg.Event):
-        is_key_down = event.type == pg.KEYDOWN
-        if event.type in [pg.KEYDOWN, pg.KEYUP]:
-            if event.key == pg.K_RIGHT:
-                self.keyRight = is_key_down
-            if event.key == pg.K_LEFT:
-                self.keyLeft = is_key_down
-            if event.key == pg.K_UP:
-                self.keyUp = is_key_down
-            if event.key == pg.K_DOWN:
-                self.keyDown = is_key_down
-            if event.key == pg.K_SPACE:
-                self.buttonSpace = is_key_down
-
-
-class SoundType(Enum):
-    HIT = auto()
-    DESTROY = auto()
-
-
-class SoundManager:
-    def __init__(self):
-        pg.mixer.init(11025)  # raises exception on fail
-        main_dir = os.path.split(os.path.abspath(__file__))[0]
-        sound_path = os.path.join(main_dir, "resources", "boom.wav")
-
-        self.sounds = {SoundType.DESTROY: pg.mixer.Sound(sound_path)}
-
-    def play(self, t: SoundType):
-        self.sounds[t].play()
-        pass
-
-    pass
 
 
 def main():
     print(f'current dir : [{os.getcwd()}]')
 
-    Context.initialize()
-    context = Context.get_instance()
+    game_context.initialize()
 
     pg.init()
     clock = pg.time.Clock()
@@ -105,12 +29,12 @@ def main():
     tpc = [time.perf_counter(), 0]
     counter = 0
 
-    #game_pad = GamePad()
+    # game_pad = GamePad()
     while running:
         clock.tick(60)
 
         for event in pg.event.get():
-            context.pad.process_event(event)
+            game_context.pad().process_event(event)
             if event.type == pg.QUIT:
                 running = False
             if event.type == pg.KEYDOWN:
@@ -120,7 +44,7 @@ def main():
         if counter % 100 == 10:
             enemies.append(Enemy(PosF(100, 100)))
 
-        the_player.play(context, bullets)
+        the_player.play(bullets)
         the_player.tick()
 
         for b in bullets:
@@ -140,7 +64,7 @@ def main():
         enemies = [e for e in enemies if e.is_live()]
         enemy_num_after = len(enemies)
         if enemy_num_after < enemy_num_before:
-            context.sound.play(SoundType.DESTROY)
+            game_context.sound().play(game_context.SoundType.DESTROY)
 
         screen.fill((200, 200, 200))
         the_player.render(screen)
