@@ -1,9 +1,17 @@
 from __future__ import annotations
 
 import os
+from enum import Enum, auto
 
 import mode_play
+import mode_title
 from objects import *
+
+
+# noinspection PyArgumentList
+class ModeType(Enum):
+    TITLE = auto()
+    PLAY = auto()
 
 
 def main():
@@ -14,7 +22,9 @@ def main():
     clock = pg.time.Clock()
     game_context.initialize()
 
-    play_mode = mode_play.initialize()
+    play_mode: mode_play.PlayMode = None
+    title_mode = mode_title.initialize()
+    current_mode = ModeType.TITLE
 
     running = True
     while running:
@@ -22,10 +32,21 @@ def main():
 
         pad = game_context.game_pad
         pad.tick()
-        if pad.button_escape:
-            running = False
 
-        play_mode.tick()
+        # if pad.button_escape:
+        #     running = False
+
+        if current_mode == ModeType.TITLE:
+            selected_item = title_mode.tick()
+            if selected_item == mode_title.MenuType.EXIT:
+                running = False
+            elif selected_item == mode_title.MenuType.PLAY:
+                play_mode = mode_play.initialize()
+                current_mode = ModeType.PLAY
+        elif current_mode == ModeType.PLAY:
+            result = play_mode.tick()
+            if result == mode_play.PlayResult.END:
+                current_mode = ModeType.TITLE
         pg.display.flip()
 
 

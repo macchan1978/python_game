@@ -1,15 +1,20 @@
 import time
+from enum import Enum, auto
 
 from pygame.font import SysFont
 
 from objects import *
 
 
+# noinspection PyArgumentList
+class PlayResult(Enum):
+    PLAYING = auto()
+    END = auto()
+
+
 class PlayMode:
     def __init__(self):
         self.font = pg.font.SysFont("", 25)
-        # define a variable to control the main loop
-        self.running = True
 
         self.player = Player(pos=PosF(200, 200))
 
@@ -21,8 +26,9 @@ class PlayMode:
         self.counter = 0
         self.score = 0
 
-    def tick(self):
+    def tick(self) -> PlayResult:
         screen = game_context.get_screen()
+        pad = game_context.get_pad()
 
         self.counter += 1
         if self.counter % 100 == 10:
@@ -71,9 +77,9 @@ class PlayMode:
         screen.blit(disp_score, (10, 50))
 
         # TODO : ゲーム終了
-        if rest_sec <= 0:
-            pass
-        pass
+        if rest_sec <= 0 or pad.button_escape:
+            return PlayResult.END
+        return PlayResult.PLAYING
 
     pass
 
