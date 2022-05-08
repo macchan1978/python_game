@@ -19,8 +19,8 @@ class Player(ObjectBase):
         self.update_rect()
 
     def play(self, bullets: list[Bullet]):
-        pad = game_context.pad()
-        if pad.buttonSpace:
+        pad = game_context.get_pad()
+        if pad.button_space:
             self.shot(bullets)
 
         angle = self.calc_move_angle(pad)
@@ -32,23 +32,23 @@ class Player(ObjectBase):
 
     @staticmethod
     def calc_move_angle(pad: game_context.GamePad) -> tuple[bool, float]:
-        if pad.keyUp and pad.keyRight:
+        if pad.key_up and pad.key_right:
             return True, -45.0
-        if pad.keyRight and pad.keyDown:
+        if pad.key_right and pad.key_down:
             return True, 45.0
-        if pad.keyDown and pad.keyLeft:
+        if pad.key_down and pad.key_left:
             return True, 135.0
-        if pad.keyLeft and pad.keyUp:
+        if pad.key_left and pad.key_up:
             return True, -135.0
-        if pad.keyUp:
+        if pad.key_up:
             return True, -90.0
-        if pad.keyRight:
+        if pad.key_right:
             return True, 0.0
-        if pad.keyDown:
+        if pad.key_down:
             return True, 90.0
-        if pad.keyLeft:
+        if pad.key_left:
             return True, 180.0
-        if pad.keyUp:
+        if pad.key_up:
             return True, -90
         return False, 0
 

@@ -2,31 +2,47 @@ import os
 from enum import Enum, auto
 import pygame as pg
 from pygame.event import Event
+from pygame.surface import Surface
 
 
-# define a main function
 class GamePad:
+    button_escape: bool
+    button_space: bool
+    key_left: bool
+    key_down: bool
+    key_right: bool
+    key_up: bool
+
     def __init__(self):
-        self.keyUp = False
-        self.keyRight = False
-        self.keyDown = False
-        self.keyLeft = False
-        self.buttonSpace = False
+        self.key_up = False
+        self.key_right = False
+        self.key_down = False
+        self.key_left = False
+        self.button_space = False
+        self.button_escape = False
         pass
 
+    def tick(self):
+        for event in pg.event.get():
+            self.process_event(event)
+
     def process_event(self, event: Event):
+
         is_key_down = event.type == pg.KEYDOWN
         if event.type in [pg.KEYDOWN, pg.KEYUP]:
             if event.key == pg.K_RIGHT:
-                self.keyRight = is_key_down
+                self.key_right = is_key_down
             if event.key == pg.K_LEFT:
-                self.keyLeft = is_key_down
+                self.key_left = is_key_down
             if event.key == pg.K_UP:
-                self.keyUp = is_key_down
+                self.key_up = is_key_down
             if event.key == pg.K_DOWN:
-                self.keyDown = is_key_down
+                self.key_down = is_key_down
             if event.key == pg.K_SPACE:
-                self.buttonSpace = is_key_down
+                self.button_space = is_key_down
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_ESCAPE:
+                self.button_escape = is_key_down
 
 
 class SoundType(Enum):
@@ -51,17 +67,23 @@ class SoundManager:
 
 sound_mgr: SoundManager
 game_pad: GamePad
+screen: Surface
 
 
 def initialize():
-    global sound_mgr, game_pad
+    global sound_mgr, game_pad, screen
     sound_mgr = SoundManager()
     game_pad = GamePad()
+    screen = pg.display.set_mode((800, 600))
 
 
-def pad() -> GamePad:
+def get_pad() -> GamePad:
     return game_pad
 
 
-def sound() -> SoundManager:
+def get_sound() -> SoundManager:
     return sound_mgr
+
+
+def get_screen() -> Surface:
+    return screen
