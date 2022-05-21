@@ -19,7 +19,7 @@ class PlayMode:
         self.font = pg.font.SysFont("", 25)
         self.map = GameMap()
 
-#        self.player = Player(pos=PosF(200, 200))
+        #        self.player = Player(pos=PosF(200, 200))
 
         self.bullets: list[Bullet] = []
         self.enemies: list[Enemy] = []
@@ -29,11 +29,11 @@ class PlayMode:
                 if cell == 0:
                     pass
                 elif cell == 1:
-                    self.walls.append(Wall(PosF((x+0.5)*defs.cell_width, (y+0.5)*defs.cell_width)))
+                    self.walls.append(Wall(PosF((x + 0.5) * defs.cell_width, (y + 0.5) * defs.cell_width)))
                 elif cell == 2:
-                    self.player = Player(PosF((x+0.5)*defs.cell_width, (y+0.5)*defs.cell_width))
+                    self.player = Player(PosF((x + 0.5) * defs.cell_width, (y + 0.5) * defs.cell_width))
                 elif cell == 3:
-                    self.enemies.append(Enemy(PosF((x+0.5)*defs.cell_width, (y+0.5)*defs.cell_width)))
+                    self.enemies.append(Enemy(PosF((x + 0.5) * defs.cell_width, (y + 0.5) * defs.cell_width)))
 
         self.tpc_start = time.perf_counter()
         self.tpc = [time.perf_counter(), 0]
@@ -87,9 +87,10 @@ class PlayMode:
         disp_frame_rate = self.font.render(f'{tpc_ms:.3g}', False, (255, 255, 255))
         disp_rest_sec = self.font.render(f'rest : {rest_sec}', False, (255, 255, 255))
         disp_score = self.font.render(f'Score : {self.score}', False, (255, 255, 255))
-        screen.blit(disp_frame_rate, (10, 10))
-        screen.blit(disp_rest_sec, (10, 30))
-        screen.blit(disp_score, (10, 50))
+        pg.draw.rect(screen,(0,0,0),(defs.status_x,0,defs.screen_width-defs.status_x,defs.screen_height))
+        screen.blit(disp_frame_rate, (defs.status_x + 10, 10))
+        screen.blit(disp_rest_sec, (defs.status_x + 10, 30))
+        screen.blit(disp_score, (defs.status_x + 10, 50))
 
         # TODO : ゲーム終了
         if rest_sec <= 0 or pad.button_escape:
