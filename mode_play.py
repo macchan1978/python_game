@@ -20,6 +20,9 @@ class PlayMode:
 
         self.bullets: list[Bullet] = []
         self.enemies: list[Enemy] = []
+        self.walls: list[Wall] = []
+        for i in range(10):
+            self.walls.append(Wall(PosF(i*30, i*30*2)))
         self.tpc_start = time.perf_counter()
         self.tpc = [time.perf_counter(), 0]
         self.total_sec = 30
@@ -61,6 +64,8 @@ class PlayMode:
             b.render(screen)
         for e in self.enemies:
             e.render(screen)
+        for w in self.walls:
+            w.render(screen)
 
         # 処理時間
         self.tpc[1] = time.perf_counter()
