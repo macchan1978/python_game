@@ -3,6 +3,8 @@ from enum import Enum, auto
 
 from pygame.font import SysFont
 
+import defs
+from map_generator import GameMap
 from objects import *
 
 
@@ -15,14 +17,24 @@ class PlayResult(Enum):
 class PlayMode:
     def __init__(self):
         self.font = pg.font.SysFont("", 25)
+        self.map = GameMap()
 
-        self.player = Player(pos=PosF(200, 200))
+#        self.player = Player(pos=PosF(200, 200))
 
         self.bullets: list[Bullet] = []
         self.enemies: list[Enemy] = []
         self.walls: list[Wall] = []
-        for i in range(10):
-            self.walls.append(Wall(PosF(i*30, i*30*2)))
+        for y, line in enumerate(self.map.map):
+            for x, cell in enumerate(line):
+                if cell == 0:
+                    pass
+                elif cell == 1:
+                    self.walls.append(Wall(PosF((x+0.5)*defs.cell_width, (y+0.5)*defs.cell_width)))
+                elif cell == 2:
+                    self.player = Player(PosF((x+0.5)*defs.cell_width, (y+0.5)*defs.cell_width))
+                elif cell == 3:
+                    self.enemies.append(Enemy(PosF((x+0.5)*defs.cell_width, (y+0.5)*defs.cell_width)))
+
         self.tpc_start = time.perf_counter()
         self.tpc = [time.perf_counter(), 0]
         self.total_sec = 30
@@ -34,8 +46,6 @@ class PlayMode:
         pad = game_context.get_pad()
 
         self.counter += 1
-        if self.counter % 100 == 10:
-            self.enemies.append(Enemy(PosF(100, 100)))
 
         self.player.play(self.bullets)
         self.player.tick()

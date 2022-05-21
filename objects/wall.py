@@ -1,9 +1,10 @@
+import defs
 from .objectBase import *
 
 
 class Wall(ObjectBase):
     def __init__(self, pos: PosF):
-        self.rect = pg.Rect(0, 0, 30, 30)
+        self.rect = pg.Rect(0, 0, defs.cell_width, defs.cell_width)
         self.color = [255, 255, 255]
         self.pos = pos
         self.update_rect()

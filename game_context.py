@@ -73,7 +73,7 @@ def initialize():
     global sound_mgr, game_pad, screen
     sound_mgr = SoundManager()
     game_pad = GamePad()
-    screen = pg.display.set_mode((800, 600))
+    screen = pg.display.set_mode((1024, 768))
 
 
 def get_pad() -> GamePad:

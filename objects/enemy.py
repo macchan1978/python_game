@@ -11,9 +11,9 @@ class Enemy(ObjectBase):
         self.color = [100, 250, 255]
         self.life = 5
         self.pos = pos
-        self.speed = 1
-        self.dirVec = VecF(1, 0)
-        self.moveVec = VecF(1, 0)
+        self.speed = 0.1
+        self.dirVec = VecF(0, 1)
+        self.moveVec = VecF(0, self.speed)
         # 当たり判定.
         self.rect = pg.Rect(0, 0, 30, 30)
         self.rectDir = pg.Rect(0, 0, 10, 10)
@@ -32,7 +32,7 @@ class Enemy(ObjectBase):
         self.life -= 1
 
     def is_live(self):
-        return self.life > 0 and self.counter < 500
+        return self.life > 0 and self.counter < 1000
 
     def is_destroyed(self):
         return self.life <= 0
