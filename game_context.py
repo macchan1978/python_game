@@ -40,7 +40,6 @@ class GamePad:
                 self.key_down = is_key_down
             if event.key == pg.K_SPACE:
                 self.button_space = is_key_down
-        if event.type == pg.KEYDOWN:
             if event.key == pg.K_ESCAPE:
                 self.button_escape = is_key_down
 
